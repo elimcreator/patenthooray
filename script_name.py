@@ -18,7 +18,7 @@ logging.info("Telegram bot initialized.")
 # Настройка Google Sheets
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 CREDS_FILE = 'credentials.json'  # Используем файл, который создаётся в GitHub Actions
-COLUMN_INDEX = 2  # индекс столбца, который отслеживаем (начинается с 1)
+COLUMN_INDEX = 3  # индекс столбца, который отслеживаем (начинается с 1)
 
 try:
     creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
