@@ -2,10 +2,7 @@ import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from telegram import Bot
-from telegram import Update
-from telegram.ext import ApplicationBuilder
 import time
-import asyncio
 import logging
 
 # Настройка логирования
@@ -14,14 +11,14 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Настройка Telegram бота
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
-
 bot = Bot(token=TELEGRAM_TOKEN)
+
 logging.info("Telegram bot initialized.")
 
 # Настройка Google Sheets
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 CREDS_FILE = 'credentials.json'  # Используем файл, который создаётся в GitHub Actions
-COLUMN_INDEX = 3  # индекс столбца, который отслеживаем (начинается с 1)
+COLUMN_INDEX = 2  # индекс столбца, который отслеживаем (начинается с 1)
 
 try:
     creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
@@ -35,7 +32,7 @@ except Exception as e:
 previous_values = sheet.col_values(COLUMN_INDEX)
 logging.info(f"Initial values in column {COLUMN_INDEX}: {previous_values}")
 
-async def check_for_updates():
+def check_for_updates():
     global previous_values
     try:
         current_values = sheet.col_values(COLUMN_INDEX)
@@ -44,22 +41,22 @@ async def check_for_updates():
         for row, value in enumerate(current_values):
             if value == "готово" and previous_values[row] != "готово":
                 logging.info(f"Change detected in row {row + 1}. Sending message to Telegram.")
-                await send_telegram_message(row + 1)
+                send_telegram_message(row + 1)
                 previous_values[row] = value  # обновляем состояние ячеек
             else:
                 logging.info(f"No changes detected in row {row + 1}.")
     except Exception as e:
         logging.error(f"Error while checking for updates: {e}")
 
-async def send_telegram_message(row):
+def send_telegram_message(row):
     message = f"Задача в строке {row} изменена на 'готово'."
     try:
-        await bot.send_message(chat_id=CHAT_ID, text=message)  # Используем await для асинхронного вызова
+        bot.send_message(chat_id=CHAT_ID, text=message)  # Это синхронный вызов, теперь он работает корректно
         logging.info(f"Message sent to Telegram for row {row}.")
     except Exception as e:
         logging.error(f"Error while sending message to Telegram: {e}")
 
-async def main():
+if __name__ == "__main__":
     start_time = time.time()  # время запуска скрипта
     max_duration = 300  # максимальное время работы скрипта, 300 секунд (5 минут)
 
@@ -67,11 +64,8 @@ async def main():
 
     while time.time() - start_time < max_duration:
         logging.info("Checking for updates...")
-        await check_for_updates()
+        check_for_updates()
         logging.info("Sleeping for 10 seconds.")
-        await asyncio.sleep(10)  # ждём 10 секунд между проверками
+        time.sleep(10)  # ждём 10 секунд между проверками
     
     logging.info("Script finished.")
-
-if __name__ == "__main__":
-    asyncio.run(main())
