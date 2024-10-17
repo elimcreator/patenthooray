@@ -34,8 +34,10 @@ def send_telegram_message(row):
     message = f"Задача в строке {row} изменена на 'готово'."
     bot.send_message(chat_id=CHAT_ID, text=message)
 
-# Основной цикл программы
 if __name__ == "__main__":
-    while True:
+    start_time = time.time()  # время запуска скрипта
+    max_duration = 300  # максимальное время работы скрипта, 300 секунд (5 минут)
+
+    while time.time() - start_time < max_duration:
         check_for_updates()
-        time.sleep(10)  # проверяем каждые 10 секунд
+        time.sleep(10)  # ждём 10 секунд между проверками
