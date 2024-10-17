@@ -2,8 +2,6 @@ name: Run Telegram Bot
 
 on:
   workflow_dispatch:  # Добавляем возможность запуска вручную
-  schedule:
-    - cron: '*/1 * * * *'  # Запускаем скрипт каждую минуту
 
 jobs:
   run-bot:
