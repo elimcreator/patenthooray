@@ -12,11 +12,11 @@ bot = Bot(token=TELEGRAM_TOKEN)
 # Настройка Google Sheets
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 CREDS_FILE = 'credentials.json'  # Используем файл, который создаётся в GitHub Actions
-COLUMN_INDEX = 2  # индекс столбца, который отслеживаем (начинается с 1)
+COLUMN_INDEX = 3  # индекс столбца, который отслеживаем (начинается с 1)
 
 creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
 client = gspread.authorize(creds)
-sheet = client.open_by_key('your-google-sheet-id').sheet1
+sheet = client.open_by_key('18jaRufkOwvRsZos5wB7IuRy-M79AdsIk9VvufLAThvA').worksheet('Темы')
 
 # Хранение предыдущего состояния ячеек
 previous_values = sheet.col_values(COLUMN_INDEX)
