@@ -51,7 +51,7 @@ def check_for_updates():
 def send_telegram_message(row):
     message = f"Задача в строке {row} изменена на 'готово'."
     try:
-        bot.send_message(chat_id=CHAT_ID, text=message)
+        bot.send_message(chat_id=CHAT_ID, text=message)  # Это синхронный вызов, теперь он работает корректно
         logging.info(f"Message sent to Telegram for row {row}.")
     except Exception as e:
         logging.error(f"Error while sending message to Telegram: {e}")
